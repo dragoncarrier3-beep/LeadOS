@@ -16,11 +16,11 @@ const navTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: '#0F172A',
-    card: '#0F172A',
-    text: '#F8FAFC',
-    border: '#1E293B',
-    primary: '#2563EB',
+    background: '#0A0A0A',
+    card: '#0A0A0A',
+    text: '#FFFFFF',
+    border: '#1A1A1A',
+    primary: '#FF5C00',
   },
 };
 
@@ -49,5 +49,5 @@ export default function RootNavigator() {
 }
 
 const styles = StyleSheet.create({
-  boot: { flex: 1, backgroundColor: '#0F172A', alignItems: 'center', justifyContent: 'center' },
+  boot: { flex: 1, backgroundColor: '#0A0A0A', alignItems: 'center', justifyContent: 'center' },
 });
