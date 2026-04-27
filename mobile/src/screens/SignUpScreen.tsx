@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -24,18 +24,38 @@ export default function SignUpScreen({ navigation }: Props) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const submittingRef = useRef(false);
 
   async function onSubmit() {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setErr(null);
     setInfo(null);
     setBusy(true);
-    const { error } = await signUp(email.trim(), password, fullName.trim());
-    setBusy(false);
-    if (error) {
-      setErr(error.message);
-      return;
+    try {
+      const { error, needsEmailConfirmation } = await signUp(
+        email.trim(),
+        password,
+        fullName.trim()
+      );
+      if (error) {
+        const msg = error.message || 'Sign up failed. Please try again.';
+        if (/rate limit/i.test(msg)) {
+          setErr('Too many sign-up attempts. Please wait a few minutes and try again.');
+        } else {
+          setErr(msg);
+        }
+        return;
+      }
+      if (needsEmailConfirmation) {
+        setInfo('Account created. Please check your email to confirm, then sign in.');
+      } else {
+        setInfo("Account created. You're signed in.");
+      }
+    } finally {
+      setBusy(false);
+      submittingRef.current = false;
     }
-    setInfo('Check your email to confirm your account, then sign in.');
   }
 
   return (
@@ -48,8 +68,8 @@ export default function SignUpScreen({ navigation }: Props) {
           <Pressable onPress={() => navigation.goBack()} hitSlop={12}>
             <Text style={styles.back}>← Back</Text>
           </Pressable>
-          <Text style={styles.logo}>Create account</Text>
-          <Text style={styles.tag}>Salesperson access</Text>
+          <Text style={styles.logo}>Create an account</Text>
+          <Text style={styles.tag}>Seller access</Text>
         </View>
         <View style={styles.form}>
           {err ? <Text style={styles.err}>{err}</Text> : null}
@@ -59,7 +79,7 @@ export default function SignUpScreen({ navigation }: Props) {
             style={styles.input}
             value={fullName}
             onChangeText={setFullName}
-            placeholder="Jean Tremblay"
+            placeholder="John Smith"
             placeholderTextColor="#64748B"
           />
           <Text style={styles.lbl}>Email</Text>
@@ -96,28 +116,28 @@ export default function SignUpScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0F172A' },
+  safe: { flex: 1, backgroundColor: '#0A0A0A' },
   flex: { flex: 1 },
   header: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 24 },
-  back: { color: '#3B82F6', fontSize: 16, fontWeight: '600', marginBottom: 20 },
-  logo: { fontSize: 24, fontWeight: '800', color: '#F8FAFC' },
-  tag: { marginTop: 8, fontSize: 15, color: '#94A3B8' },
+  back: { color: '#FF5C00', fontSize: 16, fontWeight: '700', marginBottom: 20 },
+  logo: { fontSize: 24, fontWeight: '900', color: '#FFFFFF', letterSpacing: -0.4 },
+  tag: { marginTop: 8, fontSize: 15, color: '#555' },
   form: { paddingHorizontal: 24, gap: 4 },
-  lbl: { fontSize: 12, fontWeight: '600', color: '#94A3B8', marginTop: 12 },
+  lbl: { fontSize: 12, fontWeight: '700', color: '#444', marginTop: 12, letterSpacing: 0.2 },
   input: {
     marginTop: 6,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#2A2A2A',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#F8FAFC',
-    backgroundColor: '#1E293B',
+    color: '#FFFFFF',
+    backgroundColor: '#181818',
   },
   btn: {
     marginTop: 28,
-    backgroundColor: '#2563EB',
+    backgroundColor: '#FF5C00',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',

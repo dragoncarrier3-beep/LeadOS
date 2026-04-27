@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -22,13 +22,20 @@ export default function SignInScreen({ navigation }: Props) {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const submittingRef = useRef(false);
 
   async function onSubmit() {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setErr(null);
     setBusy(true);
-    const { error } = await signIn(email.trim(), password);
-    setBusy(false);
-    if (error) setErr(error.message);
+    try {
+      const { error } = await signIn(email.trim(), password);
+      if (error) setErr(error.message);
+    } finally {
+      setBusy(false);
+      submittingRef.current = false;
+    }
   }
 
   return (
@@ -38,8 +45,8 @@ export default function SignInScreen({ navigation }: Props) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.header}>
-          <Text style={styles.logo}>LeadOS</Text>
-          <Text style={styles.tag}>Sign in to continue</Text>
+          <Text style={styles.logo}>Replik</Text>
+          <Text style={styles.tag}>Sign in</Text>
         </View>
         <View style={styles.form}>
           {err ? <Text style={styles.err}>{err}</Text> : null}
@@ -60,7 +67,7 @@ export default function SignInScreen({ navigation }: Props) {
             secureTextEntry
             value={password}
             onChangeText={setPassword}
-            placeholder="••••••••"
+            placeholder="Password"
             placeholderTextColor="#64748B"
           />
           <Pressable
@@ -80,27 +87,27 @@ export default function SignInScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0F172A' },
+  safe: { flex: 1, backgroundColor: '#0A0A0A' },
   flex: { flex: 1 },
   header: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 32 },
-  logo: { fontSize: 28, fontWeight: '800', color: '#2563EB', letterSpacing: -0.5 },
-  tag: { marginTop: 8, fontSize: 16, color: '#94A3B8' },
+  logo: { fontSize: 28, fontWeight: '900', color: '#FF5C00', letterSpacing: -0.8 },
+  tag: { marginTop: 8, fontSize: 16, color: '#555' },
   form: { paddingHorizontal: 24, gap: 4 },
-  lbl: { fontSize: 12, fontWeight: '600', color: '#94A3B8', marginTop: 12 },
+  lbl: { fontSize: 12, fontWeight: '700', color: '#444', marginTop: 12, letterSpacing: 0.2 },
   input: {
     marginTop: 6,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#2A2A2A',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#F8FAFC',
-    backgroundColor: '#1E293B',
+    color: '#FFFFFF',
+    backgroundColor: '#181818',
   },
   btn: {
     marginTop: 28,
-    backgroundColor: '#2563EB',
+    backgroundColor: '#FF5C00',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
@@ -109,5 +116,5 @@ const styles = StyleSheet.create({
   btnTx: { color: '#fff', fontSize: 16, fontWeight: '700' },
   err: { color: '#F87171', fontSize: 14, marginBottom: 8 },
   linkWrap: { marginTop: 20, alignItems: 'center' },
-  link: { color: '#3B82F6', fontSize: 15, fontWeight: '600' },
+  link: { color: '#FF5C00', fontSize: 15, fontWeight: '700' },
 });

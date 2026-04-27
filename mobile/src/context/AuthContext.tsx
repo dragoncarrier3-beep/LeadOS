@@ -7,11 +7,23 @@ type AuthContextValue = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string
+  ) => Promise<{ error: Error | null; needsEmailConfirmation?: boolean }>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+function normalizeAuthErrorMessage(message: string) {
+  if (!message) return 'Something went wrong. Please try again.';
+  if (/invalid login credentials/i.test(message)) {
+    return 'No account found for this email. Please register first.';
+  }
+  return message;
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -50,16 +62,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signIn: async (email, password) => {
         if (!isSupabaseConfigured) return { error: new Error('Supabase is not configured') };
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        return { error: error ? new Error(error.message) : null };
+        return { error: error ? new Error(normalizeAuthErrorMessage(error.message)) : null };
       },
       signUp: async (email, password, fullName) => {
         if (!isSupabaseConfigured) return { error: new Error('Supabase is not configured') };
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { data: { full_name: fullName } },
         });
-        return { error: error ? new Error(error.message) : null };
+        if (error) return { error: new Error(normalizeAuthErrorMessage(error.message)) };
+
+        // If email confirmations are enabled, Supabase will not return a session.
+        // Do not attempt an immediate sign-in (it will fail until the email is confirmed).
+        if (!data.session) return { error: null, needsEmailConfirmation: true };
+
+        return { error: null, needsEmailConfirmation: false };
       },
       signOut: async () => {
         if (!isSupabaseConfigured) return;

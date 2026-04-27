@@ -74,7 +74,7 @@ export default function LeadsScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.top}>
         <View>
-          <Text style={styles.logo}>LeadOS</Text>
+          <Text style={styles.logo}>Replik</Text>
           <Text style={styles.welcome}>Your leads</Text>
         </View>
         <Pressable onPress={() => void signOut()} hitSlop={8}>
@@ -84,11 +84,11 @@ export default function LeadsScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#2563EB" />
+          <ActivityIndicator size="large" color="#FF5C00" />
         </View>
       ) : error ? (
         <View style={styles.center}>
-          <Text style={styles.errTitle}>Could not load leads</Text>
+          <Text style={styles.errTitle}>Unable to load leads</Text>
           <Text style={styles.sub}>{error}</Text>
         </View>
       ) : (
@@ -97,14 +97,14 @@ export default function LeadsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={rows.length === 0 ? styles.emptyList : styles.list}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF5C00" />
           }
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Text style={styles.emptyTitle}>No leads yet</Text>
+              <Text style={styles.emptyTitle}>No leads</Text>
               <Text style={styles.sub}>
-                When leads are assigned to you, they will appear here. Phase 6 adds email and
-                webhook ingestion.
+                When leads are assigned to you, they will appear here. A later phase will add email
+                ingestion and webhooks.
               </Text>
             </View>
           }
@@ -123,7 +123,7 @@ export default function LeadsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0F172A' },
+  safe: { flex: 1, backgroundColor: '#0A0A0A' },
   top: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -131,27 +131,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1E293B',
+    borderBottomColor: '#1A1A1A',
   },
-  logo: { fontSize: 22, fontWeight: '800', color: '#2563EB' },
-  welcome: { marginTop: 4, fontSize: 14, color: '#94A3B8' },
-  signOut: { fontSize: 15, fontWeight: '600', color: '#3B82F6', paddingTop: 4 },
+  logo: { fontSize: 22, fontWeight: '900', color: '#FF5C00', letterSpacing: -0.8 },
+  welcome: { marginTop: 4, fontSize: 12, color: '#555', fontWeight: '700', letterSpacing: 0.3 },
+  signOut: { fontSize: 13, fontWeight: '700', color: '#FF5C00', paddingTop: 6 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
-  title: { fontSize: 20, fontWeight: '700', color: '#F8FAFC', marginBottom: 8, textAlign: 'center' },
+  title: { fontSize: 20, fontWeight: '900', color: '#FFFFFF', marginBottom: 8, textAlign: 'center' },
   errTitle: { fontSize: 18, fontWeight: '700', color: '#F87171', marginBottom: 8 },
-  sub: { fontSize: 15, color: '#94A3B8', textAlign: 'center', lineHeight: 22 },
+  sub: { fontSize: 12, color: '#555', textAlign: 'center', lineHeight: 18 },
   list: { padding: 16, paddingBottom: 32 },
   emptyList: { flexGrow: 1, justifyContent: 'center', padding: 24 },
   empty: { alignItems: 'center' },
-  emptyTitle: { fontSize: 20, fontWeight: '700', color: '#F8FAFC', marginBottom: 10 },
+  emptyTitle: { fontSize: 18, fontWeight: '900', color: '#FFFFFF', marginBottom: 10 },
   card: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#111',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#1E1E1E',
   },
-  cardName: { fontSize: 16, fontWeight: '700', color: '#F8FAFC' },
-  cardVeh: { marginTop: 4, fontSize: 14, color: '#94A3B8' },
-  cardMeta: { marginTop: 8, fontSize: 12, fontWeight: '600', color: '#64748B', textTransform: 'capitalize' },
+  cardName: { fontSize: 14, fontWeight: '800', color: '#FFFFFF' },
+  cardVeh: { marginTop: 3, fontSize: 11, color: '#555', fontWeight: '600' },
+  cardMeta: { marginTop: 8, fontSize: 10, fontWeight: '700', color: '#444', textTransform: 'uppercase', letterSpacing: 1.2 },
 });

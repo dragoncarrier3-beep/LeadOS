@@ -10,15 +10,15 @@ export default function PlaceholderScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.box}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.sub}>Coming in a later milestone.</Text>
+        <Text style={styles.sub}>Coming in a later phase.</Text>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0F172A' },
+  safe: { flex: 1, backgroundColor: '#0A0A0A' },
   box: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
-  title: { fontSize: 22, fontWeight: '700', color: '#F8FAFC', marginBottom: 8 },
-  sub: { fontSize: 15, color: '#94A3B8', textAlign: 'center' },
+  title: { fontSize: 22, fontWeight: '800', color: '#FFFFFF', marginBottom: 8 },
+  sub: { fontSize: 14, color: '#555', textAlign: 'center' },
 });
