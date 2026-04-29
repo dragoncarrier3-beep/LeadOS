@@ -4,13 +4,13 @@ Thumbs.db
 
 # ---------------------------------------------------------------------------
 # Secrets & local environment (never commit real Supabase or API credentials)
-# Use mobile/.env.example and supabase/.env.example as templates only.
+# Use mobile/.env.example as the template for client env vars.
+# The whole supabase/ directory stays local only (migrations, CLI config, .env).
 # ---------------------------------------------------------------------------
 .env
 .env.*
 !.env.example
 !mobile/.env.example
-!supabase/.env.example
 
 # Common secret filenames
 *.pem
@@ -18,6 +18,9 @@ Thumbs.db
 credentials.json
 *-credentials.json
 serviceAccount*.json
+
+# Supabase (entire folder: migrations, config, local .env — do not push)
+supabase/
 
 # Supabase CLI local state (can include project linkage / secrets)
 .supabase/
